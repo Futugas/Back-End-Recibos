@@ -7,6 +7,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_SORT_KEYS = False
 
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-super-secret-key'
+
     # Configuración de logs
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')

@@ -1,14 +1,19 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Cliente
+from flask_jwt_extended import jwt_required
 
 clientes_bp = Blueprint('clientes', __name__)
 
 @clientes_bp.route('', methods=['GET'])
+@jwt_required()
 def get_clientes():
     """Obtener todos los clientes"""
     clientes = Cliente.query.all()
-    return jsonify([c.to_dict() for c in clientes]), 200
+    return jsonify({
+        "status": 200,
+        "data": [c.to_dict() for c in clientes]
+    }), 200
 
 @clientes_bp.route('/<int:id>', methods=['GET'])
 def get_cliente(id):
