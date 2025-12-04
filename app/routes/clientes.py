@@ -5,29 +5,48 @@ from flask_jwt_extended import jwt_required
 
 clientes_bp = Blueprint('clientes', __name__)
 
-@clientes_bp.route('', methods=['GET'])
+
+# Helper para respuestas uniformes
+def response(status=200, message="OK", data=None):
+    return jsonify({
+        "status": status,
+        "message": message,
+        "data": data
+    }), status
+
+
+# GET /api/clientes
+@clientes_bp.get('')
 @jwt_required()
 def get_clientes():
-    """Obtener todos los clientes"""
     clientes = Cliente.query.all()
-    return jsonify({
-        "status": 200,
-        "data": [c.to_dict() for c in clientes]
-    }), 200
+    return response(
+        status=200,
+        message="Lista de clientes obtenida",
+        data=[c.to_dict() for c in clientes]
+    )
 
-@clientes_bp.route('/<int:id>', methods=['GET'])
+
+# GET /api/clientes/<id>
+@clientes_bp.get('/<int:id>')
+@jwt_required()
 def get_cliente(id):
-    """Obtener un cliente por ID"""
     cliente = Cliente.query.get_or_404(id)
-    return jsonify(cliente.to_dict()), 200
+    return response(
+        status=200,
+        message="Cliente obtenido correctamente",
+        data=cliente.to_dict()
+    )
 
-@clientes_bp.route('', methods=['POST'])
+
+# POST /api/clientes
+@clientes_bp.post('')
+@jwt_required()
 def create_cliente():
-    """Crear un nuevo cliente"""
-    data = request.get_json()
+    data = request.get_json() or {}
 
-    if not data or not data.get('nombre'):
-        return jsonify({'error': 'El nombre es requerido'}), 400
+    if not data.get('nombre'):
+        return response(400, "El nombre es obligatorio")
 
     cliente = Cliente(
         nombre=data.get('nombre'),
@@ -39,44 +58,53 @@ def create_cliente():
     try:
         db.session.add(cliente)
         db.session.commit()
-        return jsonify(cliente.to_dict()), 201
+        return response(201, "Cliente creado exitosamente", cliente.to_dict())
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return response(500, f"Error al crear cliente: {str(e)}")
 
-@clientes_bp.route('/<int:id>', methods=['PUT'])
+
+# PUT /api/clientes/<id>
+@clientes_bp.put('/<int:id>')
+@jwt_required()
 def update_cliente(id):
-    """Actualizar un cliente"""
     cliente = Cliente.query.get_or_404(id)
-    data = request.get_json()
+    data = request.get_json() or {}
 
-    cliente.nombre = data.get('nombre', cliente.nombre)
-    cliente.direccion = data.get('direccion', cliente.direccion)
-    cliente.referencia = data.get('referencia', cliente.referencia)
-    cliente.codigo_postal = data.get('codigo_postal', cliente.codigo_postal)
+    for field in ["nombre", "direccion", "referencia", "codigo_postal"]:
+        if field in data:
+            setattr(cliente, field, data[field])
 
     try:
         db.session.commit()
-        return jsonify(cliente.to_dict()), 200
+        return response(200, "Cliente actualizado correctamente", cliente.to_dict())
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return response(500, f"Error al actualizar cliente: {str(e)}")
 
-@clientes_bp.route('/<int:id>', methods=['DELETE'])
+
+# DELETE /api/clientes/<id>
+@clientes_bp.delete('/<int:id>')
+@jwt_required()
 def delete_cliente(id):
-    """Eliminar un cliente"""
     cliente = Cliente.query.get_or_404(id)
 
     try:
         db.session.delete(cliente)
         db.session.commit()
-        return '', 204
+        return response(204, "Cliente eliminado", None)
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return response(500, f"Error al eliminar cliente: {str(e)}")
 
-@clientes_bp.route('/<int:id>/recibos', methods=['GET'])
+
+# GET /api/clientes/<id>/recibos
+@clientes_bp.get('/<int:id>/recibos')
+@jwt_required()
 def get_recibos_cliente(id):
-    """Obtener todos los recibos de un cliente"""
     cliente = Cliente.query.get_or_404(id)
-    return jsonify([r.to_dict() for r in cliente.recibos]), 200
+    return response(
+        status=200,
+        message="Recibos del cliente obtenidos",
+        data=[r.to_dict() for r in cliente.recibos]
+    )
