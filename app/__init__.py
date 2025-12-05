@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -15,6 +16,14 @@ def create_app(config_name='default'):
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": "*",  # ← Cambio aquí
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
 
     # Registrar blueprints existentes
     from app.routes.clientes import clientes_bp
