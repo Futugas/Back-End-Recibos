@@ -19,7 +19,7 @@ def create_app(config_name='default'):
 
     CORS(app, resources={
         r"/api/*": {
-            "origins": "*",  # ← Cambio aquí
+            "origins": "*",
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"]
         }
@@ -32,6 +32,7 @@ def create_app(config_name='default'):
     from app.routes.cargos import cargos_bp
     from app.routes.historico_consumo import historico_bp
     from app.routes.auth import auth_bp
+    from app.routes.zona_area import zonas_bp
 
     app.register_blueprint(clientes_bp, url_prefix='/api/clientes')
     app.register_blueprint(recibos_bp, url_prefix='/api/recibos')
@@ -39,5 +40,6 @@ def create_app(config_name='default'):
     app.register_blueprint(cargos_bp, url_prefix='/api/cargos')
     app.register_blueprint(historico_bp, url_prefix='/api/historico-consumo')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(zonas_bp, url_prefix='/api/zonas')
 
     return app
