@@ -108,3 +108,18 @@ def get_recibos_cliente(id):
         message="Recibos del cliente obtenidos",
         data=[r.to_dict() for r in cliente.recibos]
     )
+
+# GET /api/clientes/por-zona-area/<zona_id>/<area_id>
+@clientes_bp.get('/por-zona-area/<int:zona_id>/<int:area_id>')
+@jwt_required()
+def get_clientes_por_zona_area(zona_id, area_id):
+    clientes = Cliente.query.filter(
+        Cliente.zona_id == zona_id,
+        Cliente.area_id == area_id
+    ).all()
+
+    return response(
+        status=200,
+        message="Clientes filtrados por zona y área",
+        data=[c.to_dict() for c in clientes]
+    )
