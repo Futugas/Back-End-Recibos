@@ -4,6 +4,7 @@ class Cliente(db.Model):
     __tablename__ = 'clientes'
 
     id = db.Column(db.Integer, primary_key=True)
+
     nombre = db.Column(db.String(200), nullable=False)
     direccion = db.Column(db.Text)
     referencia = db.Column(db.String(200))
@@ -11,6 +12,9 @@ class Cliente(db.Model):
 
     zona_id = db.Column(db.Integer, db.ForeignKey('zonas.id'), nullable=False)
     area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
+
+    cargo = db.Column(db.Numeric)
+    estado = db.Column(db.Text)
 
     recibos = db.relationship(
         'Recibo',
@@ -26,5 +30,7 @@ class Cliente(db.Model):
             "referencia": self.referencia,
             "codigo_postal": self.codigo_postal,
             "zona_id": self.zona_id,
-            "area_id": self.area_id
+            "area_id": self.area_id,
+            "cargo": str(self.cargo) if self.cargo is not None else None,
+            "estado": self.estado
         }

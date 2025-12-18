@@ -71,7 +71,7 @@ def update_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     data = request.get_json() or {}
 
-    for field in ["nombre", "direccion", "referencia", "codigo_postal"]:
+    for field in ["nombre", "direccion", "referencia", "codigo_postal", "zona_id", "area_id", "cargo", "estado"]:
         if field in data:
             setattr(cliente, field, data[field])
 
