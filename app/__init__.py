@@ -32,7 +32,7 @@ def create_app(config_name='default'):
     from app.routes.cargos import cargos_bp
     from app.routes.historico_consumo import historico_bp
     from app.routes.auth import auth_bp
-    from app.routes.zona_area import zonas_bp
+    from app.routes.catalogos import zonas_bp
 
     app.register_blueprint(clientes_bp, url_prefix='/api/clientes')
     app.register_blueprint(recibos_bp, url_prefix='/api/recibos')
