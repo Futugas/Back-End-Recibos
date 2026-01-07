@@ -27,18 +27,10 @@ def create_app(config_name='default'):
 
     # Registrar blueprints existentes
     from app.routes.clientes import clientes_bp
-    from app.routes.recibos import recibos_bp
-    from app.routes.consumo import consumo_bp
-    from app.routes.cargos import cargos_bp
-    from app.routes.historico_consumo import historico_bp
     from app.routes.auth import auth_bp
     from app.routes.catalogos import zonas_bp
 
     app.register_blueprint(clientes_bp, url_prefix='/api/clientes')
-    app.register_blueprint(recibos_bp, url_prefix='/api/recibos')
-    app.register_blueprint(consumo_bp, url_prefix='/api/consumo')
-    app.register_blueprint(cargos_bp, url_prefix='/api/cargos')
-    app.register_blueprint(historico_bp, url_prefix='/api/historico-consumo')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(zonas_bp, url_prefix='/api/zonas')
 
